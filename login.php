@@ -4,7 +4,7 @@ $conn = include 'db.php';
 function handelLogin($conn, $email, $password)
 {
     if (empty($email) || empty($password)) {
-        echo "<p class='text-red-500 text-center mt-4'>Please fill all the fields</p>";
+        echo "<p class='text-white round-sm mb-5 text-center mt-4 p-2 bg-red-700'>Please fill all the fields</p>";
         return;
     }
 
@@ -19,8 +19,13 @@ function handelLogin($conn, $email, $password)
     } else {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
-            // Set token/cookie or session if needed
-            header("Location: index.php");
+        $accessToken = $user['id'] . "_" . (time() + (86400 * 30));
+        echo 'Assess Token: ' . $accessToken;
+        $tokenSet = setcookie("accessToken", $accessToken, time() + (86400 * 30), "/");
+        if ($tokenSet) {
+            header("Location: add_todo.php");
+          
+        }
             exit;
         } else {
             echo "<p class='text-red-500 text-center mt-4'>Invalid email or password</p>";
